@@ -1,13 +1,7 @@
-<template>
+<script type="text/javascript">
+    import Vue from 'vue';
 
-</template>
+    const eventBus = new Vue();
 
-<script>
-    export default {
-        name: "EventBus"
-    }
+    export default eventBus;
 </script>
-
-<style scoped>
-
-</style>
