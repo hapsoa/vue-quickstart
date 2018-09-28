@@ -25,6 +25,22 @@
   }
 
   .header {
+    padding: 4px 20px 4px 20px;
+    background-color: orange;
+    color: aqua;
+    text-align: center;
+  }
 
+  .footer {
+    padding: 4px 20px 4px 20px;
+    background-color: aqua;
+    text-align: left;
+  }
+
+  .content {
+    padding: 10px;
+    height: auto;
+    min-height: 40px;
+    text-align: left;
   }
 </style>
