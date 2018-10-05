@@ -4,28 +4,26 @@
             <div class="form-group">
                 <button @click="fetchContacts">1페이지 연락처 조회</button>
             </div>
-            <div class="form-group">
+            <div  class="form-group">
                 <input type="text" v-model="name" placeholder="이름을 입력합니다" />
                 <input type="text" v-model="tel" placeholder="전화번호를 입력합니다" />
                 <input type="text" v-model="address" placeholder="주소를 입력합니다" />
-                <button @click="addContact">연락처 1건 추가</button>
+                <button @click="addContact">연락처 1건  추가</button>
             </div>
-            <div class="form-group">
-                <input type="text" v-model="no" />
-                <button @click="addContact">연락처 1건 추가</button>
+            <div  class="form-group">
+                <input type="text" v-model="no" /> <button @click="fetchContactOne">연락처 1건  조회</button>
             </div>
-            <div class="form-group">
+            <div  class="form-group">
                 <input type="text" v-model="no" />
                 <input type="text" v-model="name" placeholder="이름을 입력합니다" />
                 <input type="text" v-model="tel" placeholder="전화번호를 입력합니다" />
                 <input type="text" v-model="address" placeholder="주소를 입력합니다" />
-                <button @click="addContact">수정</button>
+                <button @click="updateContact">수정</button>
             </div>
             <div class="form-group">
-                <input type="text" v-model="no" />
-                <button @click="deleteContact">삭제</button>
+                <input type="text" v-model="no" /> <button @click="deleteContact">삭제</button>
             </div>
-            <div class="from-group">
+            <div class="form-group">
                 <input type="text" v-model="no" />
                 <input type="file" ref="photofile" name="photo" />
                 <button @click="changePhoto">파일 변경</button>
@@ -41,61 +39,88 @@
 <script>
     /* eslint-disable no-console */
 
-    import axios from 'axios';
-
     export default {
-        name: "app",
+        name : "app",
         data() {
             return {
-                no: 0,
-                name: '',
-                tel: '',
-                address: '',
-                result: null
+                no : 0, name : '', tel:'', address:'',
+                result : null
             }
         },
-        methods: {
-            fetchContacts() {
-                axios({
-                    method: 'GET',
-                    url: '/api/contacts',
-                    params: {
-                        pageno: 1,
-                        pagesize: 5
-                    }
+        methods : {
+            fetchContacts : function() {
+                this.$axios({
+                    method : 'GET',
+                    url : '/api/contacts',
+                    params : { pageno : 1, pagesize:5 }
                 })
                     .then((response) => {
                         console.log(response);
                         this.result = response.data;
                     })
-                    .catch((ex) => {
+                    .catch((ex)=> {
                         console.log("ERROR!!!! : ", ex);
                     })
             },
-            addContact() {
-
+            addContact : function() {
+                this.$axios.post('/api/contacts', { name:this.name, tel:this.tel, address:this.address })
+                    .then((response) => {
+                        console.log(response);
+                        this.result = response.data;
+                        this.no = response.data.no;
+                    })
+                    .catch((ex)=> {
+                        console.log("ERROR!!!! : ", ex);
+                    })
             },
-            fetchContactOne() {
-                axios.get('/api/contacts/'+this.no)
-                    .then((response)=> {
+            fetchContactOne : function() {
+                this.$axios.get('/api/contacts/'+this.no)
+                    .then((response) => {
                         console.log(response);
                         this.result = response.data;
                     })
             },
-            updateContact() {
-
+            updateContact : function() {
+                this.$axios.put('/api/contacts/'+this.no, { name:this.name, tel:this.tel, address:this.address })
+                    .then((response) => {
+                        console.log(response);
+                        this.name = '';
+                        this.tel = '';
+                        this.address='';
+                        this.result = response.data;
+                    })
+                    .catch((ex)=> {
+                        console.log("ERROR!!!! : ", ex);
+                    })
             },
-            deleteContact() {
-
+            deleteContact : function() {
+                this.$axios.delete('/api/contacts/'+this.no)
+                    .then((response) => {
+                        console.log(response);
+                        this.no = 0;
+                        this.result = response.data;
+                    })
+                    .catch((ex)=> {
+                        console.log("ERROR!!!! : ", ex);
+                    })
             },
-            changePhoto() {
-
+            changePhoto : function() {
+                var data = new FormData();
+                var file = this.$refs.photofile.files[0];
+                data.append('photo', file);
+                this.$axios.post('/api/contacts/' +this.no + '/photo', data)
+                    .then((response) => {
+                        this.result = response.data;
+                    })
+                    .catch((ex) => {
+                        console.log('updatePhoto failed', ex);
+                    });
             }
         }
     }
 </script>
 
-<style scoped>
+<style>
     @import url("https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.css");
     #app {
         font-family: 'Avenir', Helvetica, Arial, sans-serif;
